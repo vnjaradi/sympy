@@ -7,7 +7,12 @@ from itertools import accumulate
 from sympy import MatMul, Basic, Wild, KroneckerProduct
 from sympy.assumptions.ask import (Q, ask)
 from sympy.core.mul import Mul
+from sympy.core.add import Add
 from sympy.core.singleton import S
+from sympy.matrices.expressions.matmul import MatMul
+from sympy.matrices.expressions.matadd import MatAdd
+from sympy.matrices.expressions.trace import Trace
+from sympy.matrices.expressions.transpose import Transpose
 from sympy.matrices.expressions.diagonal import DiagMatrix
 from sympy.matrices.expressions.hadamard import hadamard_product, HadamardPower
 from sympy.matrices.expressions.matexpr import MatrixExpr
@@ -689,7 +694,6 @@ def _array_diag2contr_diagmatrix(expr: ArrayDiagonal):
 
 def _a2m_mul(*args):
     if not any(isinstance(i, _CodegenArrayAbstract) for i in args):
-        from sympy.matrices.expressions.matmul import MatMul
         return MatMul(*args).doit()
     else:
         return _array_contraction(
@@ -718,9 +722,10 @@ def _a2m_tensor_product(*args):
 
 
 def _a2m_add(*args):
-    if not any(isinstance(i, _CodegenArrayAbstract) for i in args):
-        from sympy.matrices.expressions.matadd import MatAdd
+    if not any(isinstance(i, (_CodegenArrayAbstract, Trace)) for i in args):
         return MatAdd(*args).doit()
+    if not any(isinstance(i, _CodegenArrayAbstract) for i in args):
+        return Add(*args).doit()
     else:
         return _array_add(*args)
 
@@ -729,7 +734,6 @@ def _a2m_trace(arg):
     if isinstance(arg, _CodegenArrayAbstract):
         return _array_contraction(arg, (0, 1))
     else:
-        from sympy.matrices.expressions.trace import Trace
         return Trace(arg)
 
 
@@ -737,7 +741,6 @@ def _a2m_transpose(arg):
     if isinstance(arg, _CodegenArrayAbstract):
         return _permute_dims(arg, [1, 0])
     else:
-        from sympy.matrices.expressions.transpose import Transpose
         return Transpose(arg).doit()
 
 
