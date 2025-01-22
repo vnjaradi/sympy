@@ -5,6 +5,7 @@ from sympy.core import Add, Basic, Mul
 from sympy.core.singleton import S
 from sympy.core.sorting import default_sort_key
 from sympy.core.traversal import preorder_traversal
+from sympy.matrices.expressions.matexpr import MatMul
 
 
 def sub_pre(e):
@@ -19,7 +20,10 @@ def sub_pre(e):
         if na.is_Mul:  # e.g. MatExpr
             ignore.add(a)
             continue
-        reps[a] = Mul._from_args([S.NegativeOne, na])
+        if na.is_MatAdd:
+            reps[a] = MatMul._from_args([S.NegativeOne, na])
+        else:
+            reps[a] = Mul._from_args([S.NegativeOne, na])
 
     e = e.xreplace(reps)
 

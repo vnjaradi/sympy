@@ -2235,11 +2235,14 @@ class Expr(Basic, EvalfMixin):
         as_numer_denom: return ``(a, b)`` instead of ``a/b``
 
         """
-        from .mul import _unevaluated_Mul
         n, d = self.as_numer_denom()
         if d is S.One:
             return n
         if d.is_Number:
+            if n.is_Matrix:
+                from ..matrices.expressions.matmul import _unevaluated_Mul
+            else:
+                from .mul import _unevaluated_Mul
             return _unevaluated_Mul(n, 1/d)
         else:
             return n/d

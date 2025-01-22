@@ -2192,7 +2192,7 @@ def _keep_coeff(coeff, factors, clear=True, sign=False):
                 margs.pop(0)
         else:
             margs.insert(0, coeff)
-        return Mul._from_args(margs)
+        return factors.func._from_args(margs)
     else:
         m = coeff*factors
         if m.is_Number and not factors.is_Number:

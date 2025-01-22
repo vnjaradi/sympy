@@ -14,6 +14,8 @@ from sympy.matrices.expressions.special import ZeroMatrix, GenericZeroMatrix
 from sympy.matrices.expressions._shape import validate_matadd_integer as validate
 from sympy.utilities.iterables import sift
 from sympy.utilities.exceptions import sympy_deprecation_warning
+from sympy.core.mul import _mulsort
+from sympy.matrices.expressions.matmul import _unevaluated_Mul
 
 # XXX: MatAdd should perhaps not subclass directly from Add
 class MatAdd(MatrixExpr, Add):
