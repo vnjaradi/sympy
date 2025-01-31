@@ -1716,7 +1716,7 @@ class _EditArrayContraction:
     def merge_scalars(self):
         scalars = []
         for arg_with_ind in self.args_with_ind:
-            if len(arg_with_ind.indices) == 0:
+            if len(arg_with_ind.indices) == 0 and not isinstance(arg_with_ind.element, _CodegenArrayAbstract):
                 scalars.append(arg_with_ind)
         for i in scalars:
             self.args_with_ind.remove(i)
